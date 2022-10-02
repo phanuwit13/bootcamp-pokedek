@@ -4,34 +4,26 @@ import { useNavigate } from 'react-router-dom';
 import { Card, Text, IconToggle } from '@atomic';
 import { getCardColorsByPokemonTypes } from '@utils';
 
-const PokemonCard = ({ pokemon, handleOnVoteClick }) => {
+const Container = styled.div`
+  margin: 2rem;
+`;
+
+const StyledImage = styled.div`
+  padding: 2rem;
+`;
+
+const PokemonCard = ({ pokemon }) => {
   let navigate = useNavigate();
 
   const pokemonId = <span>#{pokemon.id}</span>;
 
-  const handleOnIconInfoClick = async () => {
+  const handleOnIconInfoClick = () => {
     navigate(`/pokemon?id=${pokemon.id}`, { replace: true });
-  };
-
-  const scoreDisplay = (score) => {
-    if (score >= 1000) {
-      return score / 1000 + 'k';
-    } else {
-      return score;
-    }
   };
 
   const icons = (
     <div>
-      <Score>{pokemon.score > 0 && scoreDisplay(pokemon.score)}</Score>
-      <IconToggle
-        name="heart"
-        onClick={() => {
-          handleOnVoteClick(pokemon.id);
-        }}
-        active={pokemon.score > 0}
-        margin={'0 0.3rem 0 0'}
-      />
+      <IconToggle name="heart" margin={'0 0.3rem 0 0'} />
       <IconToggle
         name="info"
         isColorChange={false}
@@ -62,16 +54,3 @@ const PokemonCard = ({ pokemon, handleOnVoteClick }) => {
 };
 
 export default PokemonCard;
-
-const Container = styled.div`
-  margin: 2rem;
-`;
-
-const StyledImage = styled.div`
-  padding: 2rem;
-`;
-
-const Score = styled.span`
-  padding-right: 1rem;
-  font-size: 1rem;
-`;

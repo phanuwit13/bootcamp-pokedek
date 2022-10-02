@@ -16,20 +16,19 @@ const IconToggle = ({
   margin,
   onClick,
   isColorChange = true,
-  active,
   ...props
 }) => {
-  // const [active, setAction] = useState(activeVote || false);
+  const [active, setAction] = useState(false);
 
   const handleOnIconClick = () => {
-    // isColorChange && setAction(!active);
+    isColorChange && setAction(!active);
     onClick?.();
   };
 
   return (
     <StyedIcon
       name={name}
-      active={active || false}
+      active={active}
       margin={margin}
       onClick={handleOnIconClick}
       {...props}

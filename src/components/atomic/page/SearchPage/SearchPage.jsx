@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Row, Col, Spin, Alert } from 'antd';
+import { Row, Col, Spin } from 'antd';
 import { filter } from 'lodash';
 
 import { Logo, FilterDropdown, Search, PokemonCard } from '@atomic';
-import { pokemonApiV2, useToken, pokemonApiUserData } from '@utils';
+import { pokemonApiV2 } from '@utils';
 
 import pokemonLogo from '@/assets/images/pokedex.png';
 
@@ -16,6 +16,26 @@ import {
   filterBySearch,
   sortingBy
 } from './helper';
+
+const Container = styled.div`
+  text-align: center;
+  width: 90%;
+  margin: auto;
+`;
+
+const StyledRow = styled(Row)`
+  max-width: 1000px;
+  margin: auto;
+  margin-top: 2rem;
+  padding: 2rem;
+`;
+
+const PokemonContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  padding: 2rem;
+  justify-content: space-around;
+`;
 
 const regionDropdownItems = regions.map((r) => ({
   ...r,
@@ -84,16 +104,9 @@ const initial = {
   error: null
 };
 
-const DEFAULT_ALERT = {
-  data: '',
-  type: 'info'
-};
-
-const SearchPage = ({ logout }) => {
+const SearchPage = () => {
   const [filters, setFilter] = useState({});
   const [state, setState] = useState(initial);
-  const { user, token, setToken } = useToken();
-  const [alertMsg, setAlertMsg] = useState(DEFAULT_ALERT);
 
   const onFilterChange = (key, value) => {
     setFilter((prevFilter) => ({
@@ -123,32 +136,8 @@ const SearchPage = ({ logout }) => {
       for (let pokemon of pokemonResults) {
         const response = await pokemonApiV2.get(`pokemon/${pokemon?.name}`);
         const monster = await response?.data;
-        await pokemonList.push({ ...monster, score: 0 });
+        await pokemonList.push(monster);
       }
-    } catch (error) {
-      fetchError = error;
-    }
-
-    try {
-      const response = await pokemonApiUserData.get(`/pokemon/score/all`, {
-        headers: {
-          Authorization: `bearer ${token}`
-        }
-      });
-      const pokemonResults = response?.data?.data || [];
-      if (response.data.success) {
-        setToken(response.data._token);
-      }
-      pokemonResults.forEach((item) => {
-        const indexList = pokemonList.findIndex(
-          (el) => el.id == item.pokemon_id
-        );
-        pokemonList[indexList] = {
-          ...pokemonList[indexList],
-          score: item.score
-        };
-      });
-      console.log('pokemonList', pokemonList);
     } catch (error) {
       fetchError = error;
     }
@@ -161,54 +150,13 @@ const SearchPage = ({ logout }) => {
     }));
   };
 
-  const handleOnVoteClick = async (id) => {
-    setAlertMsg(DEFAULT_ALERT);
-    let response = await pokemonApiUserData.post(
-      'pokemon/vote',
-      {
-        item: [
-          {
-            id: id
-          }
-        ]
-      },
-      {
-        headers: {
-          Authorization: `bearer ${token}`
-        }
-      }
-    );
-    if (response.data.success) {
-      fetchPokemonList();
-      setToken(response.data._token);
-    } else {
-      setAlertMsg({
-        data: response.data.data,
-        type: 'error'
-      });
-    }
-  };
-
   useEffect(() => {
     queryString && fetchPokemonList();
   }, [queryString]);
 
   return (
     <Container>
-      {alertMsg.data && (
-        <AlertMessage>
-          <Alert message={alertMsg.data} type={alertMsg.type} banner />
-        </AlertMessage>
-      )}
-      <HeaderContainer>
-        <Logo src={pokemonLogo} width={200} />
-        <LeftMenu>
-          <span>{user?.firstName}</span>
-          <LogoutButton role="button" onClick={logout}>
-            Logout
-          </LogoutButton>
-        </LeftMenu>
-      </HeaderContainer>
+      <Logo src={pokemonLogo} width={200} />
       <StyledRow>
         <Col xs={24} sm={12} md={6}>
           <FilterDropdown
@@ -244,11 +192,7 @@ const SearchPage = ({ logout }) => {
           <Spin />
         ) : (
           [...pokemonLists].map((pokemon) => (
-            <PokemonCard
-              key={pokemon.id}
-              pokemon={pokemon}
-              handleOnVoteClick={handleOnVoteClick}
-            />
+            <PokemonCard key={pokemon.id} pokemon={pokemon} />
           ))
         )}
       </PokemonContainer>
@@ -257,52 +201,3 @@ const SearchPage = ({ logout }) => {
 };
 
 export default SearchPage;
-
-const Container = styled.div`
-  text-align: center;
-  width: 90%;
-  margin: auto;
-`;
-
-const StyledRow = styled(Row)`
-  max-width: 1000px;
-  margin: auto;
-  margin-top: 2rem;
-  padding: 2rem;
-`;
-
-const PokemonContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  padding: 2rem;
-  justify-content: space-around;
-`;
-
-const HeaderContainer = styled.div`
-  position: relative;
-`;
-
-const LeftMenu = styled.div`
-  position: absolute;
-  top: 24px;
-  right: 0;
-  display: flex;
-  gap: 10px;
-  'a': {
-    color: #d9d9d9;
-  }
-`;
-
-const LogoutButton = styled.div`
-  color: #d9d9d9;
-  cursor: pointer;
-  &:hover {
-    color: #1890ff;
-  }
-`;
-
-const AlertMessage = styled.div`
-  position: absolute;
-  top: 0;
-  width: 100%;
-`;
