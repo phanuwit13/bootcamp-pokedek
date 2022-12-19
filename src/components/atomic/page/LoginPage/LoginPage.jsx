@@ -23,11 +23,11 @@ const LoginPage = ({ setToken, setUser }) => {
     const response = await pokemonUser.post(`register`, data)
     console.log('response', response)
     if (response.data.success) {
+      onClearError()
       setAlertData({
         data: 'REGISTER SUCCESSFUL',
         type: 'success',
       })
-      onClearError()
     } else {
       setAlertData({
         data: response.data.data,
@@ -41,9 +41,9 @@ const LoginPage = ({ setToken, setUser }) => {
     const response = await pokemonUser.post(`login`, data)
     console.log('response', response)
     if (response.data.success) {
+      onClearError()
       setToken(response.data._token)
       setUser(response.data.data[0])
-      onClearError()
     } else {
       setAlertData({
         data: response.data.data,

@@ -6,6 +6,6 @@ const createAxios = (baseUrl) =>
   })
 
 const pokemonApiV2 = createAxios('https://pokeapi.co/api/v2/')
-const pokemonUser = createAxios('http://localhost:8080/')
+const pokemonUser = createAxios('https://difficult-fish-sunglasses.cyclic.app/')
 
 export { pokemonApiV2, pokemonUser }
