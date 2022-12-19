@@ -65,7 +65,7 @@ const types = [
   'water'
 ];
 
-const sortby = ['Id', 'Name'];
+const sortby = ['Id', 'Name','Score'];
 
 const filterByType = (pokemon = {}, filterType = '') => {
   const pokemonTypes = pokemon?.types?.map((i) => i?.type?.name) || [];
@@ -88,6 +88,10 @@ const sortingBy = (sortBy) => {
 
   if (sortBy === 'Name') {
     return (a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0);
+  }
+
+  if (sortBy === 'Score') {
+    return (a, b) => (a.score < b.score ? 1 : b.score < a.score ? -1 : 0);
   }
 };
 

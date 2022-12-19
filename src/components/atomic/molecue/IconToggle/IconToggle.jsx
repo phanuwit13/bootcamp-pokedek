@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import styled from 'styled-components';
+import { useState } from 'react'
+import styled from 'styled-components'
 
-import { Icon } from '@atomic';
+import { Icon } from '@atomic'
 
 const StyedIcon = styled(Icon)`
   margin: ${(props) => props.margin};
@@ -9,21 +9,20 @@ const StyedIcon = styled(Icon)`
   svg {
     fill: ${(props) => (props.active ? '#da7589' : 'currentColor')};
   }
-`;
+`
 
 const IconToggle = ({
   name,
   margin,
   onClick,
   isColorChange = true,
+  active,
   ...props
 }) => {
-  const [active, setAction] = useState(false);
-
   const handleOnIconClick = () => {
-    isColorChange && setAction(!active);
-    onClick?.();
-  };
+    // isColorChange && setAction(!active);
+    onClick?.()
+  }
 
   return (
     <StyedIcon
@@ -33,7 +32,7 @@ const IconToggle = ({
       onClick={handleOnIconClick}
       {...props}
     />
-  );
-};
+  )
+}
 
-export default IconToggle;
+export default IconToggle

@@ -100,3 +100,5 @@ const PokemonInfoPage = (props) => {
 };
 
 export default PokemonInfoPage;
+
+
